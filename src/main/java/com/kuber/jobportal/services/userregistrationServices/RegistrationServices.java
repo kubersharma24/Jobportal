@@ -1,9 +1,9 @@
-package com.kuber.jobportal.services.registrationServices;
+package com.kuber.jobportal.services.userregistrationServices;
 
 import com.kuber.jobportal.models.User;
 
 public interface RegistrationServices {
     User createUser(User user);
 
-    String loginUser(String email, String password);
+    User getUserByEmail(String employer);
 }

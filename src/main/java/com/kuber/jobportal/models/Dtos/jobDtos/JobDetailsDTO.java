@@ -5,11 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class JobCreationRequestDTO {
-    private String employer;
+public class JobDetailsDTO {
+    private int jobId;
     private String title;
     private String company;
     private String location ;
     private String description;
-
 }

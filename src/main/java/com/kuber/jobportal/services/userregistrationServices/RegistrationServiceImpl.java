@@ -1,8 +1,7 @@
-package com.kuber.jobportal.services.registrationServices;
+package com.kuber.jobportal.services.userregistrationServices;
 
-import com.kuber.jobportal.models.Applicant;
 import com.kuber.jobportal.models.User;
-import com.kuber.jobportal.repositories.userregistrationRepos.RegistrationRepository;
+import com.kuber.jobportal.repositories.userregistrationRepo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,24 +9,23 @@ import java.util.Optional;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationServices{
-    private RegistrationRepository registrationRepository;
+    private UserRepository registrationRepository;
 @Autowired
-public RegistrationServiceImpl(RegistrationRepository registrationRepository) {
+public RegistrationServiceImpl(UserRepository registrationRepository) {
     this.registrationRepository = registrationRepository;
 }
     public User createUser(User user) {
         return registrationRepository.save(user);
     }
+
     @Override
-    public String loginUser(String email, String password) {
-        Optional<User> optionalUser = registrationRepository.findById(email);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (password.matches(user.getPassword())) {
-                return user.getRole();
-            }
-            return "Password incorrect";
+    public User getUserByEmail(String employer) {
+        User user = null;
+        Optional<User> byId = registrationRepository.findById(employer);
+        if (byId.isPresent()) {
+            user = byId.get();
         }
-        return "User Not Found";
+        return user;
     }
+
 }
