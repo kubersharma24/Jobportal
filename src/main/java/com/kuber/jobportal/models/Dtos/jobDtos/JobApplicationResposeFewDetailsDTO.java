@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class JobApplicationResposeFewDetailsDTO {
+    String shortDiscription;
     int applicationid;
     int jobId;
     String applicant;

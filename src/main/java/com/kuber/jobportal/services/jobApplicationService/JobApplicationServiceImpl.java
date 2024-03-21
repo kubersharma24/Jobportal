@@ -3,6 +3,7 @@ package com.kuber.jobportal.services.jobApplicationService;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobApplicationResponseDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobApplicationResposeFewDetailsDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobDetailsDTO;
+import com.kuber.jobportal.models.Dtos.resumeDTO.ResumeDTO;
 import com.kuber.jobportal.models.Job;
 import com.kuber.jobportal.models.JobApplications;
 import com.kuber.jobportal.models.User;
@@ -61,6 +62,7 @@ public class JobApplicationServiceImpl implements JobApplicationService{
             jobApplicationResposeFewDetailsDTO.setApplicant(jobApplications.getApplicant().getEmail());
             jobApplicationResposeFewDetailsDTO.setResume(jobApplications.getResume());
             jobApplicationResposeFewDetailsDTO.setApplicationid(jobApplications.getId());
+            jobApplicationResposeFewDetailsDTO.setShortDiscription(jobApplications.getShortDescription());
             list.add(jobApplicationResposeFewDetailsDTO);
         }
         return list;
@@ -80,4 +82,18 @@ public class JobApplicationServiceImpl implements JobApplicationService{
         }
         return jobApplicationResposeFewDetailsDTO;
     }
+
+    @Override
+    public ResumeDTO getResumeWithApplicationId(int applicationId) {
+        JobApplications jobApplications = new JobApplications();
+        jobApplications.setId(applicationId);
+        Optional<JobApplications> byId = jobApplicationRepository.findById(applicationId);
+        ResumeDTO resumeDTO = new ResumeDTO();
+        if(byId.isPresent()){
+            JobApplications jobApplications1 = byId.get();
+            resumeDTO.setResume(jobApplications1.getResume());
+        }
+        return resumeDTO;
+    }
+
 }
