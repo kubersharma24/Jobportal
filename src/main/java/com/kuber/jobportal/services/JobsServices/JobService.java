@@ -11,10 +11,10 @@ import java.util.List;
 public interface JobService {
     Job createJob(Job job);
 
-    Job createJob(User employer, JobCreationRequestDTO jobRequestDto);
+    void createJob(User employer, JobCreationRequestDTO jobRequestDto);
 
 //    List<Job> getAllJobsByID(String email);
-    List<JobDetailsDTO> getAllJobsByID(String email);
+    List<JobDetailsDTO> getAllJobsByID(String email );
     Job getOneJobById(int id);
 
     int DeleteAllJobsWithEmployerId(String email);
@@ -24,4 +24,5 @@ public interface JobService {
     JobDetailsDTO getOneJobByJobId(int job);
 
     List<JobDetailsDTO> getAllJobs(int page, int size);
+
 }

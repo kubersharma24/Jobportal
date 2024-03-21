@@ -3,6 +3,7 @@ package com.kuber.jobportal.controllers.ApplicationController;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobApplicationResponseDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobApplicationResposeFewDetailsDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobDetailsDTO;
+import com.kuber.jobportal.models.Dtos.resumeDTO.ResumeDTO;
 import com.kuber.jobportal.services.JobsServices.JobService;
 import com.kuber.jobportal.services.JobsServices.JobServiceImpl;
 import com.kuber.jobportal.services.Validators.UserVAlidatorImpl;
@@ -50,16 +51,20 @@ public class ApplicationController {
     }
 
     @GetMapping(USER_JOBS_JOB_APPLICATIONS)
-    public ResponseEntity<?> getAllSubimittedApplicationsByJobId(@PathVariable("user") String email, @PathVariable("job") int jobId ){
-        if(userValidator.isUser(email)){
-            if(userValidator.isEmployer(email)){
+    public ResponseEntity<?> getAllSubimittedApplicationsByJobId(
+            @PathVariable("user") String email, @PathVariable("job") int jobId){
                 List<JobApplicationResposeFewDetailsDTO> list = jobApplicationService.getAllJobApplicationWithJobId(jobId);
-                return new ResponseEntity<>(list, HttpStatus.UNAUTHORIZED);
-            }
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>("User Not found", HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(list, HttpStatus.OK);
     }
+    @GetMapping("/{user}/jobs/{job}/applications/{application}/resume")
+    public ResponseEntity<?> getResumeByApplicationsId(
+            @PathVariable("user") String email, @PathVariable("job") int jobId , @PathVariable("application") int applicationId){
+        ResumeDTO resumeDTO = jobApplicationService.getResumeWithApplicationId(applicationId);
+        return new ResponseEntity<>(resumeDTO, HttpStatus.OK);
+    }
+
+
+
     @GetMapping(USRE_JOBS_JOB_APPLICANTS_APPLICANT)
     public ResponseEntity<?> getJobApplicationWithApplicationId(@PathVariable("user") String email,
                                                                 @PathVariable("job") int jobid,
@@ -79,7 +84,7 @@ public class ApplicationController {
         }
         return new ResponseEntity<>("User Not found", HttpStatus.UNAUTHORIZED);
     }
-    @GetMapping("/applicants/jobs")
+    @GetMapping("/applicants/jobs") // applicant home page
     public ResponseEntity<?> getAllJobsWithPageination(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size){

@@ -34,14 +34,14 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job createJob(User employer, JobCreationRequestDTO jobRequestDto) {
+    public void createJob(User employer, JobCreationRequestDTO jobRequestDto) {
         Job job = new Job();
         job.setTitle(jobRequestDto.getTitle());
         job.setCompany(jobRequestDto.getCompany());
         job.setLocation(jobRequestDto.getLocation());
         job.setDescription(jobRequestDto.getDescription());
         job.setEmployer(employer);
-        return jobRepository.save(job);
+        jobRepository.save(job);
     }
 
 //    @Override
@@ -50,7 +50,7 @@ public class JobServiceImpl implements JobService {
 //        user.setEmail(email);
 //        return jobRepository.findAllByEmployer(user);
 //    }
-    public List<JobDetailsDTO> getAllJobsByID(String email) {
+    public List<JobDetailsDTO> getAllJobsByID(String email ) {
     User user = new User();
     user.setEmail(email);
     List<Job> jobs = jobRepository.findAllByEmployer(user);

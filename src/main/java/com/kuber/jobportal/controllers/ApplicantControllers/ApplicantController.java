@@ -37,29 +37,30 @@ public class ApplicantController {
     @PostMapping("/applicant/jobs/job")
     public ResponseEntity<?> applyForJob(@RequestPart("resume") MultipartFile resume,
                                          @RequestPart("applicant") String applicant,
-                                         @RequestPart("job") int jobId,
+                                         @RequestPart("job") String jobId,
                                          @RequestPart("shortDescription") String shortDescription){
-        ApplicationForJobRequest applicationForJobRequest = new ApplicationForJobRequest(applicant,shortDescription,jobId);
+        int jobId1 = Integer.parseInt(jobId);
+        ApplicationForJobRequest applicationForJobRequest = new ApplicationForJobRequest(applicant,shortDescription,jobId1);
         try {
             byte[] bytes = resume.getBytes();
             applicationForJobRequest.setResume(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if(userValidator.isUser(applicationForJobRequest.getApplicant())){
-            if(userValidator.isjob(applicationForJobRequest.getJob())){
-                if(userValidator.isApplied(applicationForJobRequest.getApplicant(), applicationForJobRequest.getJob())){
-                return new ResponseEntity<>("Already Applied For This Job", HttpStatus.FOUND);
-                }
+//        if(userValidator.isUser(applicationForJobRequest.getApplicant())){
+//            if(userValidator.isjob(applicationForJobRequest.getJob())){
+//                if(userValidator.isApplied(applicationForJobRequest.getApplicant(), applicationForJobRequest.getJob())){
+//                return new ResponseEntity<>("Already Applied For This Job", HttpStatus.FOUND);
+//                }
                 JobApplicationResponseDTO appliedJobApplications = applicantService.submitJobApplication(applicationForJobRequest);
-                if(appliedJobApplications != null ){
-                    return new ResponseEntity<>(appliedJobApplications, HttpStatus.CREATED);
-                }
-                return new ResponseEntity<>("Error posting job", HttpStatus.BAD_REQUEST);
-            }
-            return new ResponseEntity<>("Invalid Job", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>("User Not found", HttpStatus.NOT_FOUND);
+//                if(appliedJobApplications != null ){
+                    return new ResponseEntity<>(appliedJobApplications, HttpStatus.OK);
+//                }
+//                return new ResponseEntity<>("Error posting job", HttpStatus.BAD_REQUEST);
+//            }
+//            return new ResponseEntity<>("Invalid Job", HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity<>("User Not found", HttpStatus.NOT_FOUND);
     }
     @GetMapping("/{applicant}/jobs/{job}") // this will return the job looking which a applicant can apply for job
     public ResponseEntity<?> getOneJobByJobId(@PathVariable("job") int jobId, @PathVariable("applicant") String applicantId){

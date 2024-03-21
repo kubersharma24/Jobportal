@@ -1,5 +1,7 @@
 package com.kuber.jobportal.controllers.jobController;
 
+import com.kuber.jobportal.models.Dtos.jobDtos.DeleteStatusDTO.CreateJobResponseDTO;
+import com.kuber.jobportal.models.Dtos.jobDtos.DeleteStatusDTO.DeleteResposeDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobCreationRequestDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.JobDetailsDTO;
 import com.kuber.jobportal.models.Dtos.jobDtos.UserIdDTO;
@@ -35,36 +37,27 @@ public class JobController {
     @PostMapping(USER_JOBS)
     public ResponseEntity<?> createJob(@RequestBody JobCreationRequestDTO jobRequestDto){
         User employer = userService.getUserByEmail(jobRequestDto.getEmployer());
-        if(employer!=null){
-            if(userValidator.isEmployer(employer.getEmail())){
+        CreateJobResponseDTO createJobResponseDTO = new CreateJobResponseDTO();
                 try{
-                   Job job = jobsService.createJob(employer,jobRequestDto);
-                    return new ResponseEntity<>(job, HttpStatus.CREATED);
+                   jobsService.createJob(employer,jobRequestDto);
+                   createJobResponseDTO.setStatus("ok");
+                    return new ResponseEntity<>(createJobResponseDTO, HttpStatus.CREATED);
                 }catch (Exception e){
-                    return new ResponseEntity<>("error creating the job", HttpStatus.BAD_REQUEST);
+                    createJobResponseDTO.setStatus("failed");
+                    return new ResponseEntity<>(createJobResponseDTO, HttpStatus.BAD_REQUEST);
                 }
-            }
-            return new ResponseEntity<>("Employer Not Found", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>("Bad Request", HttpStatus.UNAUTHORIZED);
     }
 
 
     @GetMapping(USER_JOBS_PATH_VARIABLE)
-    public ResponseEntity<?> getAllJobsByEmployerId(@PathVariable String user){
+    public ResponseEntity<?> getAllJobsByEmployerId(@PathVariable String user,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "5") int size){
+
         UserIdDTO userIdDTO = new UserIdDTO();
         userIdDTO.setEmail(user);
-        if(userValidator.isUser(userIdDTO.getEmail())){
-            if(userValidator.isEmployer(userIdDTO.getEmail())){
                 List<JobDetailsDTO> job = jobsService.getAllJobsByID(userIdDTO.getEmail());
-                if(job.size()==0){
-                    return new ResponseEntity<>("No Jobs Available", HttpStatus.NOT_FOUND);
-                }
                 return new ResponseEntity<>(job, HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>("User Not found", HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping(USER_JOBS_JOB)
@@ -102,17 +95,11 @@ public class JobController {
 
     @DeleteMapping(USER_JOBS_JOB)
     public ResponseEntity<?> deleteSingleJobByJobId(@PathVariable("user") String email, @PathVariable("job") int id){
-        if(userValidator.isUser(email)){
-            if(userValidator.isEmployer(email)){
+
                 int effected_Jobs = jobsService.DeleteSingleJobWithJobId(id);
-                if(effected_Jobs == 0){
-                    return new ResponseEntity<>("No Jobs To Delete", HttpStatus.ACCEPTED);
-                }else{
-                    return new ResponseEntity<>("Deleted jobs : "+ effected_Jobs, HttpStatus.ACCEPTED);
-                }
-            }
-            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>("User Not found", HttpStatus.UNAUTHORIZED);
+                DeleteResposeDTO deleteResposeDTO = new DeleteResposeDTO();
+                deleteResposeDTO.setCountOfDeletedJobs(effected_Jobs);
+                return new ResponseEntity<>(deleteResposeDTO, HttpStatus.OK);
+
     }
 }
